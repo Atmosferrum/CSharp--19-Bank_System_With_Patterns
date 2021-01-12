@@ -43,52 +43,52 @@ namespace Database
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="dbName"></param>
-        private static void CreateDatabase(string dbName)
-        {
-            try
-            {
-                using (var connection = new SqlConnection(ConnectionCreator().ConnectionString))
-                {
-                    connection.Open();
+        //private static void CreateDatabase(string dbName)
+        //{
+        //    try
+        //    {
+        //        using (var connection = new SqlConnection(ConnectionCreator().ConnectionString))
+        //        {
+        //            connection.Open();
 
-                    using (var cmd = new SqlCommand($"If(db_id(N'{dbName}') IS NULL) CREATE DATABASE [{dbName}]", connection))
-                        cmd.ExecuteNonQuery();
+        //            using (var cmd = new SqlCommand($"If(db_id(N'{dbName}') IS NULL) CREATE DATABASE [{dbName}]", connection))
+        //                cmd.ExecuteNonQuery();
 
-                    connection.Close();
-                }
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception.Message);
-            }
-        }
+        //            connection.Close();
+        //        }
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        Console.WriteLine(exception.Message);
+        //    }
+        //}
 
         /// <summary>
         /// Method to ADD Tables in DB
         /// </summary>
         /// <param name="connectionString"></param>
-        private static void AddTables()
-        {
-            try
-            {
-                using (var connection = new SqlConnection(ConnectionCreator().ConnectionString))
-                {
-                    connection.Open();
+        //private static void AddTables()
+        //{
+        //    try
+        //    {
+        //        using (var connection = new SqlConnection(ConnectionCreator().ConnectionString))
+        //        {
+        //            connection.Open();
 
-                    using (var cmd = new SqlCommand(CreateDepartmentsTable(), connection))
-                        cmd.ExecuteNonQuery();
+        //            using (var cmd = new SqlCommand(CreateDepartmentsTable(), connection))
+        //                cmd.ExecuteNonQuery();
 
-                    using (var cmd = new SqlCommand(CreateClientsTable(), connection))
-                        cmd.ExecuteNonQuery();
+        //            using (var cmd = new SqlCommand(CreateClientsTable(), connection))
+        //                cmd.ExecuteNonQuery();
 
-                    connection.Close();
-                }
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception.Message);
-            }
-        }
+        //            connection.Close();
+        //        }
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        Console.WriteLine(exception.Message);
+        //    }
+        //}
 
         /// <summary>
         /// Method to CREATE String for Departments Table creation

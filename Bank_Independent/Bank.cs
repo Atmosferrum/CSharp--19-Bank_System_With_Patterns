@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,33 +40,59 @@ namespace Bank_Independent
         public static void CreateBank()
         {
             Department<Client> bank = new Department<Client>(bankName);
-            Bronze<Common> bronze = new Bronze<Common>(departmentsNames[0]);
-            Silver<Aristocrat> silver = new Silver<Aristocrat>(departmentsNames[1]);
-            Gold<Royal> gold = new Gold<Royal>(departmentsNames[2]);
+            //Bronze<Common> bronze = new Bronze<Common>(departmentsNames[0]);
+            //Silver<Aristocrat> silver = new Silver<Aristocrat>(departmentsNames[1]);
+            //Gold<Royal> gold = new Gold<Royal>(departmentsNames[2]);
 
             Departments.Add(bank);
 
-            Starter.Start();
+            //Starter.Start();
 
-            Departments[0].Departments.Add(bronze);
-            Starter.Insert(bronze.Name);
-            Departments[0].Departments.Add(silver);
-            Starter.Insert(silver.Name);
-            Departments[0].Departments.Add(gold);
-            Starter.Insert(gold.Name);
+            BankDBEntities bankDBEntities = new BankDBEntities();
 
-            PopulateBank();
-        }
+            var depts = bankDBEntities.Departments.Select(d => new
+            {
+                d.DepartmentID,
+                d.DepartmentName
+            }).ToList();
 
-        /// <summary>
-        /// Adding random Clients to Bank
-        /// </summary>
-        private static void PopulateBank()
-        {
-            for (int i = 0; i < bankSize; i++)
+            var clients = bankDBEntities.Clients.Select(c => new
+            {
+                c.ClientID,
+                c.Status,
+                c.Name,
+                c.LastName,
+                c.Deposit,
+                c.Percent,
+                c.Accummulation,
+                c.Balance,
+                c.DepartmentID,
+                c.DateOfDeposit
+            }).ToList();
+
+            bankDBEntities.Departments.Load();
+            bankDBEntities.Clients.Load();
+
+            foreach (var item in depts)
+            {
+                Departments[0].Departments.Add(new Bronze<Common>(item.DepartmentName));
+            }
+
+            foreach (var item in clients)
             {
                 int x = clientRandom.Next(3);
-                AddNewClient(x);
+                AddNewClient(x,
+                             item.Name,
+                             item.LastName,
+                             Convert.ToString(item.Deposit),
+                             Convert.ToString(item.Percent),
+                             Convert.ToString(item.DateOfDeposit));
+
+            }
+
+            foreach (var item in clients)
+            {
+                Console.WriteLine(item);
             }
         }
 
@@ -113,28 +140,6 @@ namespace Bank_Independent
                                tempClient.DepartmentID,
                                tempClient.DateOfDeposit);
             }
-
-            Task saveDataTask = new Task(SaveData);
-            saveDataTask.Start();
-            saveDataTask.Wait();
-        }
-
-        public static void AddClientToDepartment(this Client client, int clientClassIndex, params string[] args)
-        {
-            if (args.Length >= 5)
-                Departments[0].Departments[clientClassIndex].Add(ManageClient(clientClassIndex,
-                                                                              args[0],
-                                                                              args[1],
-                                                                              args[2],
-                                                                              args[3],
-                                                                              args[4]));
-            else
-                Departments[0].Departments[clientClassIndex].Add(ManageClient(clientClassIndex,
-                                                                              $"Name {(char)clientRandom.Next(128)}",
-                                                                              $"Name {(char)clientRandom.Next(128)}",
-                                                                              Convert.ToString(clientRandom.Next(2_000)),
-                                                                              Convert.ToString(clientRandom.Next(1, 6)),
-                                                                              Convert.ToString(DateRandomizer())));
 
             Task saveDataTask = new Task(SaveData);
             saveDataTask.Start();
